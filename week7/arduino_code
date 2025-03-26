@@ -1,0 +1,34 @@
+// Arduino Nano 33 IoT + DHT22 Data Logger
+#include <WiFiNINA.h>
+#include "DHT.h"
+
+#define DHTPIN 2       // Digital pin connected to DHT22
+#define DHTTYPE DHT22  // DHT22 sensor type
+
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup() {
+  Serial.begin(9600);
+  while (!Serial); // Wait for serial connection
+  
+  dht.begin();
+  Serial.println("Timestamp(ms),Temperature(C),Humidity(%)"); // CSV header
+}
+
+void loop() {
+  delay(2000);  // Wait 2 seconds between measurements
+  
+  float temp = dht.readTemperature();
+  float hum = dht.readHumidity();
+  
+  if (isnan(temp) || isnan(hum)) {
+    Serial.println("Error reading sensor!");
+    return;
+  }
+
+  Serial.print(millis());  // Timestamp in milliseconds
+  Serial.print(",");
+  Serial.print(temp);
+  Serial.print(",");
+  Serial.println(hum);
+}/
